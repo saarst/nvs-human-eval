@@ -257,9 +257,9 @@
 
     async function preloadAllImages() {
       const res = await fetch(WEBAPP_URL);
-      const data = await res.json();
-      sessionId = data.sessionId;
-      tasks = data.tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
+      tasks = await res.json();
+      console.log("Fetched data:", data);  // 🔍 shows whole response
+      tasks = tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
 
       const urls = new Set();
       for (const t of tasks) {
