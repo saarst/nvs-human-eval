@@ -1,8 +1,8 @@
 {
-  "object": "PETS_ACCESSORIES",
-  "source_angle": 0,
-  "target_angle": 10,
-  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123/PETS_ACCESSORIES_0_to_10.png",
+  "object": "ASICS_GELResolution_5_Flash_YellowBlackSilver",
+  "source_angle": 2,
+  "target_angle": 6,
+  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123/ASICS_GELResolution_5_Flash_YellowBlackSilver_2_to_6.png",
   "ckpt_path": "105000.ckpt",
   "config": "configs/sd-objaverse-finetune-c_concat-256.yaml",
   "_GPU_INDEX": 0,
