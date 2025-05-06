@@ -1,8 +1,8 @@
 {
-  "object": "Orbit_Bubblemint_Mini_Bottle_6_ct",
-  "source_angle": 9,
-  "target_angle": 14,
-  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123/Orbit_Bubblemint_Mini_Bottle_6_ct_9_to_14.png",
+  "object": "Womens_Canvas_Bahama_in_White_UfZPHGQpvz0",
+  "source_angle": 11,
+  "target_angle": 6,
+  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123/Womens_Canvas_Bahama_in_White_UfZPHGQpvz0_11_to_6.png",
   "ckpt_path": "105000.ckpt",
   "config": "configs/sd-objaverse-finetune-c_concat-256.yaml",
   "_GPU_INDEX": 0,
