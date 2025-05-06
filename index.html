@@ -183,7 +183,7 @@
     </label><br><br>
     <button id="start-btn" onclick="startEvaluation()" disabled>Start Evaluation</button>
     <div id="preload-status">📥 Preloading images...</div>
-    <p style="margin-top: 10px; font-size: 0.85rem; color: gray;">Version 1.0.1</p>
+    <p style="margin-top: 10px; font-size: 0.85rem; color: gray;">Version 1.0.0</p>
   </div>
 
   <div id="task-box">
@@ -230,12 +230,9 @@
       <button onclick="submitVote('tie')">Tie</button>
       <button onclick="submitVote('right')">Right is better</button>
     </div>
-
-    <!-- Finish button -->
-    <div style="text-align:center; margin-top: 20px;">
-      <button id="finish-btn" onclick="submitAll()" disabled>✅ Finish & Submit</button>
-    </div>
   </div>
+
+  
 
   <div id="done-message">
     <h2>✅ Thank you! Your responses have been submitted.</h2>
@@ -297,16 +294,6 @@
     function updateProgress() {
       const progress = (visitedTasks.size / tasks.length) * 100;
       document.getElementById("progress-bar").style.width = `${progress}%`;
-
-      // Enable finish button only if all results submitted
-      const allDone = tasks.every(task =>
-        results.find(r =>
-          r.object === task.object &&
-          r.source_angle === task.source_angle &&
-          r.target_angle === task.target_angle
-        )
-      );
-      document.getElementById("finish-btn").disabled = !allDone;
     }
 
     function loadTask(index) {
