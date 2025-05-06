@@ -284,8 +284,15 @@
     }
 
     function preloadImage(url) {
-      const img = new Image();
-      img.src = url;
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => {
+          console.warn("❌ Failed to load:", url);
+          resolve(false);
+        };
+        img.src = url;
+      });
     }
 
     async function preloadAllImages() {
@@ -300,7 +307,7 @@
       sessionId = data.sessionId;
       tasks = data.tasks;
       tasks = tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
-      
+
       document.getElementById("session-info").textContent = `Session: ${sessionId.substring(0, 8)}...`;
       document.getElementById("session-id-display").textContent = sessionId;
 
@@ -313,18 +320,24 @@
         urls.add(`${RENDER_ROOT}/${t.model2}/${imgName}`);
       }
 
+      const total = urls.size;
       let loaded = 0;
+
       for (const url of urls) {
-        preloadImage(url);
+        await preloadImage(url);
         loaded++;
-        if (loaded % 20 === 0) {
-          document.getElementById("preload-status").textContent = `📥 Preloading ${loaded}/${urls.size} images...`;
-          await new Promise(r => setTimeout(r, 10));
-        }
+        document.getElementById("preload-status").textContent = `📥 Preloading ${loaded}/${total} images...`;
+        await new Promise(r => setTimeout(r, 5));  // smooth loading UI
       }
 
       document.getElementById("preload-status").textContent = "✅ All images preloaded. Ready to start.";
+
+      const checkbox = document.getElementById("consent-checkbox");
+      if (checkbox.checked) {
+        document.getElementById("start-btn").disabled = false;
+      }
     }
+
 
     async function startEvaluation() {
       startTime = new Date();
