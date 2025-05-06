@@ -1,0 +1,422 @@
+[
+  {
+    "object": "3D_Dollhouse_Sink",
+    "source_angle": 13,
+    "target_angle": 15,
+    "delta_angle": 2
+  },
+  {
+    "object": "ASICS_GELResolution_5_Flash_YellowBlackSilver",
+    "source_angle": 2,
+    "target_angle": 6,
+    "delta_angle": 4
+  },
+  {
+    "object": "ASICS_GELResolution_5_Flash_YellowBlackSilver",
+    "source_angle": 14,
+    "target_angle": 13,
+    "delta_angle": 15
+  },
+  {
+    "object": "Adrenaline_GTS_13_Color_WhtObsdianBlckOlmpcSlvr_Size_70",
+    "source_angle": 1,
+    "target_angle": 3,
+    "delta_angle": 2
+  },
+  {
+    "object": "Adrenaline_GTS_13_Color_WhtObsdianBlckOlmpcSlvr_Size_70",
+    "source_angle": 3,
+    "target_angle": 12,
+    "delta_angle": 9
+  },
+  {
+    "object": "Android_Figure_Orange",
+    "source_angle": 7,
+    "target_angle": 4,
+    "delta_angle": 13
+  },
+  {
+    "object": "Android_Figure_Orange",
+    "source_angle": 13,
+    "target_angle": 6,
+    "delta_angle": 9
+  },
+  {
+    "object": "Android_Lego",
+    "source_angle": 1,
+    "target_angle": 4,
+    "delta_angle": 3
+  },
+  {
+    "object": "Android_Lego",
+    "source_angle": 10,
+    "target_angle": 6,
+    "delta_angle": 12
+  },
+  {
+    "object": "Avengers_Thor_PLlrpYniaeB",
+    "source_angle": 9,
+    "target_angle": 12,
+    "delta_angle": 3
+  },
+  {
+    "object": "Avengers_Thor_PLlrpYniaeB",
+    "source_angle": 11,
+    "target_angle": 7,
+    "delta_angle": 12
+  },
+  {
+    "object": "Chefmate_8_Frypan",
+    "source_angle": 6,
+    "target_angle": 14,
+    "delta_angle": 8
+  },
+  {
+    "object": "Chefmate_8_Frypan",
+    "source_angle": 7,
+    "target_angle": 8,
+    "delta_angle": 1
+  },
+  {
+    "object": "Closetmaid_Premium_Fabric_Cube_Red",
+    "source_angle": 5,
+    "target_angle": 7,
+    "delta_angle": 2
+  },
+  {
+    "object": "Closetmaid_Premium_Fabric_Cube_Red",
+    "source_angle": 6,
+    "target_angle": 0,
+    "delta_angle": 10
+  },
+  {
+    "object": "Clue_Board_Game_Classic_Edition",
+    "source_angle": 8,
+    "target_angle": 11,
+    "delta_angle": 3
+  },
+  {
+    "object": "Clue_Board_Game_Classic_Edition",
+    "source_angle": 11,
+    "target_angle": 6,
+    "delta_angle": 11
+  },
+  {
+    "object": "Cole_Hardware_Dishtowel_BlueWhite",
+    "source_angle": 7,
+    "target_angle": 2,
+    "delta_angle": 11
+  },
+  {
+    "object": "Cole_Hardware_Dishtowel_BlueWhite",
+    "source_angle": 13,
+    "target_angle": 12,
+    "delta_angle": 15
+  },
+  {
+    "object": "Cole_Hardware_Plant_Saucer_Brown_125",
+    "source_angle": 5,
+    "target_angle": 7,
+    "delta_angle": 2
+  },
+  {
+    "object": "Cole_Hardware_Plant_Saucer_Brown_125",
+    "source_angle": 14,
+    "target_angle": 4,
+    "delta_angle": 6
+  },
+  {
+    "object": "Crayola_Washable_Sidewalk_Chalk_16_pack",
+    "source_angle": 6,
+    "target_angle": 2,
+    "delta_angle": 12
+  },
+  {
+    "object": "Deskstar_Desk_Top_Hard_Drive_1_TB",
+    "source_angle": 0,
+    "target_angle": 9,
+    "delta_angle": 9
+  },
+  {
+    "object": "Deskstar_Desk_Top_Hard_Drive_1_TB",
+    "source_angle": 7,
+    "target_angle": 5,
+    "delta_angle": 14
+  },
+  {
+    "object": "Ecoforms_Plant_Container_S24NATURAL",
+    "source_angle": 1,
+    "target_angle": 2,
+    "delta_angle": 1
+  },
+  {
+    "object": "FRACTION_FUN_n4h4qte23QR",
+    "source_angle": 0,
+    "target_angle": 7,
+    "delta_angle": 7
+  },
+  {
+    "object": "FRACTION_FUN_n4h4qte23QR",
+    "source_angle": 9,
+    "target_angle": 7,
+    "delta_angle": 14
+  },
+  {
+    "object": "Final_Fantasy_XIV_A_Realm_Reborn_60Day_Subscription",
+    "source_angle": 1,
+    "target_angle": 15,
+    "delta_angle": 14
+  },
+  {
+    "object": "Final_Fantasy_XIV_A_Realm_Reborn_60Day_Subscription",
+    "source_angle": 2,
+    "target_angle": 13,
+    "delta_angle": 11
+  },
+  {
+    "object": "Imaginext_Castle_Ogre",
+    "source_angle": 5,
+    "target_angle": 15,
+    "delta_angle": 10
+  },
+  {
+    "object": "Imaginext_Castle_Ogre",
+    "source_angle": 8,
+    "target_angle": 9,
+    "delta_angle": 1
+  },
+  {
+    "object": "Kid_Icarus_Uprising_Nintendo_3DS_Game",
+    "source_angle": 7,
+    "target_angle": 0,
+    "delta_angle": 9
+  },
+  {
+    "object": "Kid_Icarus_Uprising_Nintendo_3DS_Game",
+    "source_angle": 8,
+    "target_angle": 10,
+    "delta_angle": 2
+  },
+  {
+    "object": "Kotex_U_Tween_Pads_16_pads",
+    "source_angle": 1,
+    "target_angle": 13,
+    "delta_angle": 12
+  },
+  {
+    "object": "LEGO_Bricks_More_Creative_Suitcase",
+    "source_angle": 13,
+    "target_angle": 15,
+    "delta_angle": 2
+  },
+  {
+    "object": "LEGO_Bricks_More_Creative_Suitcase",
+    "source_angle": 15,
+    "target_angle": 3,
+    "delta_angle": 4
+  },
+  {
+    "object": "Little_Debbie_Cloud_Cakes_10_ct",
+    "source_angle": 3,
+    "target_angle": 9,
+    "delta_angle": 6
+  },
+  {
+    "object": "Little_Debbie_Cloud_Cakes_10_ct",
+    "source_angle": 14,
+    "target_angle": 0,
+    "delta_angle": 2
+  },
+  {
+    "object": "MIRACLE_POUNDING",
+    "source_angle": 5,
+    "target_angle": 1,
+    "delta_angle": 12
+  },
+  {
+    "object": "MIRACLE_POUNDING",
+    "source_angle": 9,
+    "target_angle": 12,
+    "delta_angle": 3
+  },
+  {
+    "object": "Mens_ASV_Billfish_Boat_Shoe_in_Tan_Leather_wmUJ5PbwANc",
+    "source_angle": 6,
+    "target_angle": 4,
+    "delta_angle": 14
+  },
+  {
+    "object": "Mens_ASV_Billfish_Boat_Shoe_in_Tan_Leather_wmUJ5PbwANc",
+    "source_angle": 13,
+    "target_angle": 1,
+    "delta_angle": 4
+  },
+  {
+    "object": "Mens_Gold_Cup_ASV_Dress_Casual_Venetian_in_Dark_Brown_Leather",
+    "source_angle": 5,
+    "target_angle": 14,
+    "delta_angle": 9
+  },
+  {
+    "object": "Mens_Gold_Cup_ASV_Dress_Casual_Venetian_in_Dark_Brown_Leather",
+    "source_angle": 9,
+    "target_angle": 12,
+    "delta_angle": 3
+  },
+  {
+    "object": "Mens_Tremont_Kiltie_Tassel_Loafer_in_Black_Amaretto",
+    "source_angle": 4,
+    "target_angle": 15,
+    "delta_angle": 11
+  },
+  {
+    "object": "Mens_Tremont_Kiltie_Tassel_Loafer_in_Black_Amaretto",
+    "source_angle": 15,
+    "target_angle": 2,
+    "delta_angle": 3
+  },
+  {
+    "object": "Orbit_Bubblemint_Mini_Bottle_6_ct",
+    "source_angle": 13,
+    "target_angle": 15,
+    "delta_angle": 2
+  },
+  {
+    "object": "Ortho_Forward_Facing_CkAW6rL25xH",
+    "source_angle": 4,
+    "target_angle": 5,
+    "delta_angle": 1
+  },
+  {
+    "object": "Ortho_Forward_Facing_CkAW6rL25xH",
+    "source_angle": 7,
+    "target_angle": 15,
+    "delta_angle": 8
+  },
+  {
+    "object": "PETS_ACCESSORIES",
+    "source_angle": 0,
+    "target_angle": 10,
+    "delta_angle": 10
+  },
+  {
+    "object": "PETS_ACCESSORIES",
+    "source_angle": 2,
+    "target_angle": 3,
+    "delta_angle": 1
+  },
+  {
+    "object": "Perricone_MD_Photo_Plasma",
+    "source_angle": 8,
+    "target_angle": 13,
+    "delta_angle": 5
+  },
+  {
+    "object": "Perricone_MD_Photo_Plasma",
+    "source_angle": 15,
+    "target_angle": 14,
+    "delta_angle": 15
+  },
+  {
+    "object": "Poppin_File_Sorter_Blue",
+    "source_angle": 15,
+    "target_angle": 8,
+    "delta_angle": 9
+  },
+  {
+    "object": "Predito_LZ_TRX_FG_W",
+    "source_angle": 0,
+    "target_angle": 12,
+    "delta_angle": 12
+  },
+  {
+    "object": "Predito_LZ_TRX_FG_W",
+    "source_angle": 9,
+    "target_angle": 10,
+    "delta_angle": 1
+  },
+  {
+    "object": "Reebok_STUDIO_BEAT_LOW_V",
+    "source_angle": 6,
+    "target_angle": 7,
+    "delta_angle": 1
+  },
+  {
+    "object": "Reebok_STUDIO_BEAT_LOW_V",
+    "source_angle": 8,
+    "target_angle": 2,
+    "delta_angle": 10
+  },
+  {
+    "object": "Reebok_ZIGCOOPERSTOWN_QUAG",
+    "source_angle": 12,
+    "target_angle": 3,
+    "delta_angle": 7
+  },
+  {
+    "object": "STACKING_BEAR",
+    "source_angle": 6,
+    "target_angle": 7,
+    "delta_angle": 1
+  },
+  {
+    "object": "STACKING_BEAR",
+    "source_angle": 9,
+    "target_angle": 14,
+    "delta_angle": 5
+  },
+  {
+    "object": "Seagate_Archive_HDD_8_TB_Internal_hard_drive_SATA_6Gbs_35_ST8000AS0002",
+    "source_angle": 12,
+    "target_angle": 5,
+    "delta_angle": 9
+  },
+  {
+    "object": "Seagate_Archive_HDD_8_TB_Internal_hard_drive_SATA_6Gbs_35_ST8000AS0002",
+    "source_angle": 15,
+    "target_angle": 12,
+    "delta_angle": 13
+  },
+  {
+    "object": "Threshold_Porcelain_Serving_Bowl_Coupe_White",
+    "source_angle": 1,
+    "target_angle": 5,
+    "delta_angle": 4
+  },
+  {
+    "object": "Threshold_Porcelain_Serving_Bowl_Coupe_White",
+    "source_angle": 15,
+    "target_angle": 2,
+    "delta_angle": 3
+  },
+  {
+    "object": "WHALE_WHISTLE_6PCS_SET",
+    "source_angle": 14,
+    "target_angle": 13,
+    "delta_angle": 15
+  },
+  {
+    "object": "Wilton_PreCut_Parchment_Sheets_10_x_15_24_sheets",
+    "source_angle": 1,
+    "target_angle": 14,
+    "delta_angle": 13
+  },
+  {
+    "object": "Wilton_PreCut_Parchment_Sheets_10_x_15_24_sheets",
+    "source_angle": 2,
+    "target_angle": 13,
+    "delta_angle": 11
+  },
+  {
+    "object": "Womens_Canvas_Bahama_in_White_UfZPHGQpvz0",
+    "source_angle": 5,
+    "target_angle": 13,
+    "delta_angle": 8
+  },
+  {
+    "object": "Womens_Canvas_Bahama_in_White_UfZPHGQpvz0",
+    "source_angle": 9,
+    "target_angle": 8,
+    "delta_angle": 15
+  }
+]
