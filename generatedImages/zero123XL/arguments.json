@@ -1,8 +1,8 @@
 {
-  "object": "Deskstar_Desk_Top_Hard_Drive_1_TB",
-  "source_angle": 14,
-  "target_angle": 15,
-  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123XL/Deskstar_Desk_Top_Hard_Drive_1_TB_14_to_15.png",
+  "object": "Ortho_Forward_Facing_CkAW6rL25xH",
+  "source_angle": 15,
+  "target_angle": 10,
+  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123XL/Ortho_Forward_Facing_CkAW6rL25xH_15_to_10.png",
   "ckpt_path": "zero123-xl.ckpt",
   "config": "configs/sd-objaverse-finetune-c_concat-256.yaml",
   "_GPU_INDEX": 0,
