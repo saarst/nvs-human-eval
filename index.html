@@ -299,13 +299,18 @@
       const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
       const sourceImageName = `${t.object}_${t.source_angle}.png`;
       const delta = (t.target_angle - t.source_angle + 16) % 16;
-      const rotationDegrees = delta * 22.5;
-      const direction = delta <= 8 ? "↻" : "↺";  // clockwise if < 180°, else counter
+      
+      // Calculate angle (0-180°)
+      const rotationDegrees = Math.min(delta, 16 - delta) * 22.5;
+      
+      // Determine direction
+      const isClockwise = delta <= 8;
+      const direction = isClockwise ? "↻ (clockwise)" : "↺ (counter-clockwise)";
 
       const [left, right] = t.flip ? [t.model2, t.model1] : [t.model1, t.model2];
 
       document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
-      document.getElementById("delta-angle").textContent = `Rotation of the object: ${rotationDegrees}° ${direction}`;
+      document.getElementById("delta-angle").textContent = `Rotation: ${rotationDegrees}° ${direction}`;
 
       document.getElementById("source-img").src = `${SOURCE_ROOT}/${sourceImageName}`;
       document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
@@ -316,11 +321,9 @@
       t.left_model = left;
       t.right_model = right;
       
-      // Update navigation buttons
       document.getElementById("prev-btn").disabled = current === 0;
       document.getElementById("next-btn").disabled = current === tasks.length - 1;
       
-      // Mark task as visited
       visitedTasks.add(current);
       updateProgress();
     }
