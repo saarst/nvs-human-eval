@@ -5,32 +5,54 @@
   <title>NVS Human Evaluation</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin: 20px; }
-    img { max-width: 45%; margin: 10px; border: 1px solid #ccc; }
+    .img-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
+    img { max-width: 30%; margin: 10px; border: 1px solid #ccc; }
     button { padding: 10px 20px; font-size: 16px; margin: 10px; }
     #controls { margin-top: 20px; }
+    #delta-angle { margin-top: 10px; font-size: 18px; font-weight: bold; }
   </style>
 </head>
 <body>
   <h1>NVS Human Evaluation</h1>
+
   <div id="task-box">
     <h2 id="task-counter">Loading...</h2>
-    <div>
-      <img id="left-img" src="" alt="Left image">
-      <img id="right-img" src="" alt="Right image">
+
+    <div id="delta-angle">Delta angle: </div>
+
+    <div class="img-row">
+      <div>
+        <p>Source image</p>
+        <img id="source-img" src="" alt="Source image">
+      </div>
     </div>
+
+    <div class="img-row">
+      <div>
+        <p id="left-model-label">Left</p>
+        <img id="left-img" src="" alt="Left target image">
+      </div>
+      <div>
+        <p id="right-model-label">Right</p>
+        <img id="right-img" src="" alt="Right target image">
+      </div>
+    </div>
+
     <div id="controls">
       <button onclick="submitVote('left')">Left is better</button>
       <button onclick="submitVote('tie')">Tie</button>
       <button onclick="submitVote('right')">Right is better</button>
     </div>
   </div>
+
   <div id="done-message" style="display:none">
     <h2>✅ Thank you! Your responses have been submitted.</h2>
   </div>
 
   <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec"; // <-- Replace this
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec";
     const RENDER_ROOT = "generatedImages"; // Folder containing renders
+    const SOURCE_ROOT = "source_images";   // Folder containing source images
 
     let tasks = [];
     let current = 0;
@@ -54,12 +76,19 @@
 
       const t = tasks[current];
       const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
-      document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
+      const sourceImageName = `${t.object}_${t.source_angle}.png`;
+      const delta = (t.target_angle - t.source_angle + 16) % 16;
 
       const [left, right] = t.flip ? [t.model2, t.model1] : [t.model1, t.model2];
 
+      document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
+      document.getElementById("delta-angle").textContent = `Δ angle: ${delta * 22.5}°`; // each step = 360°/16
+      document.getElementById("source-img").src = `${SOURCE_ROOT}/${sourceImageName}`;
+
       document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
       document.getElementById("right-img").src = `${RENDER_ROOT}/${right}/${imageName}`;
+      document.getElementById("left-model-label").textContent = left;
+      document.getElementById("right-model-label").textContent = right;
 
       t.left_model = left;
       t.right_model = right;
