@@ -168,17 +168,6 @@
       background: linear-gradient(to right, #007bff, #00c6ff);
       transition: width 0.3s;
     }
-
-    #session-info {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-    }
   </style>
 </head>
 <body>
@@ -198,7 +187,7 @@
 
   <div id="task-box">
     <h2 id="task-counter">Loading...</h2>
-    
+    <div id="delta-angle"></div>
     
     <div class="progress-container">
       <div class="progress-bar" id="progress-bar"></div>
@@ -211,20 +200,18 @@
         <img id="source-img" src="" alt="Source">
       </div>
     </div>
-    <div id="delta-angle"></div>
-    <p>Which image aligns better to the source image and rotation?</p>
 
+    <!-- Target images row -->
     <div class="img-grid">
       <div class="img-block">
-        <p id="left-model-label" style="display: none;"></p>
+        <p id="left-model-label">Left Model</p>
         <img id="left-img" src="" alt="Left output">
       </div>
       <div class="img-block">
-        <p id="right-model-label" style="display: none;"></p>
+        <p id="right-model-label">Right Model</p>
         <img id="right-img" src="" alt="Right output">
       </div>
     </div>
-    
 
     <!-- Navigation buttons -->
     <div id="nav-controls">
@@ -244,10 +231,7 @@
 
   <div id="done-message">
     <h2>✅ Thank you! Your responses have been submitted.</h2>
-    <p>Your session ID: <span id="session-id-display"></span></p>
   </div>
-
-  <div id="session-info">Session: Loading...</div>
 
   <script>
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec";
@@ -258,25 +242,6 @@
     let current = 0;
     let results = [];
     let visitedTasks = new Set();
-    let sessionId = '';
-    let startTime = null;
-
-    // Get user's IP and UA
-    async function getUserInfo() {
-      try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipResponse.json();
-        return {
-          ip: ipData.ip,
-          userAgent: navigator.userAgent
-        };
-      } catch (e) {
-        return {
-          ip: 'unknown',
-          userAgent: navigator.userAgent
-        };
-      }
-    }
 
     function toggleStartButton() {
       const checkbox = document.getElementById("consent-checkbox");
@@ -284,32 +249,14 @@
     }
 
     function preloadImage(url) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => {
-          console.warn("❌ Failed to load:", url);
-          resolve(false);
-        };
-        img.src = url;
-      });
+      const img = new Image();
+      img.src = url;
     }
 
     async function preloadAllImages() {
-      const userInfo = await getUserInfo();
-      const params = new URLSearchParams();
-      params.append('ip', userInfo.ip);
-      params.append('userAgent', userInfo.userAgent);
-      
-      const res = await fetch(`${WEBAPP_URL}?${params.toString()}`);
-      const data = await res.json();
-      
-      sessionId = data.sessionId;
-      tasks = data.tasks;
+      const res = await fetch(WEBAPP_URL);
+      tasks = await res.json();
       tasks = tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
-
-      document.getElementById("session-info").textContent = `Session: ${sessionId.substring(0, 8)}...`;
-      document.getElementById("session-id-display").textContent = sessionId;
 
       const urls = new Set();
       for (const t of tasks) {
@@ -320,28 +267,20 @@
         urls.add(`${RENDER_ROOT}/${t.model2}/${imgName}`);
       }
 
-      const total = urls.size;
       let loaded = 0;
-
       for (const url of urls) {
-        await preloadImage(url);
+        preloadImage(url);
         loaded++;
-        document.getElementById("preload-status").textContent = `📥 Preloading ${loaded}/${total} images...`;
-        await new Promise(r => setTimeout(r, 5));  // smooth loading UI
+        if (loaded % 20 === 0) {
+          document.getElementById("preload-status").textContent = `📥 Preloading ${loaded}/${urls.size} images...`;
+          await new Promise(r => setTimeout(r, 10));
+        }
       }
 
       document.getElementById("preload-status").textContent = "✅ All images preloaded. Ready to start.";
-
-      const checkbox = document.getElementById("consent-checkbox");
-      if (checkbox.checked) {
-        document.getElementById("start-btn").disabled = false;
-      }
     }
 
-
     async function startEvaluation() {
-      startTime = new Date();
-      document.getElementById("preload-status").style.display = "none";
       document.getElementById("landing").style.display = "none";
       document.getElementById("task-box").style.display = "block";
       loadTask(current);
@@ -396,7 +335,7 @@
       }
     }
 
-    async function submitVote(choice) {
+    function submitVote(choice) {
       const t = tasks[current];
       
       // Check if we already have a result for this task
@@ -426,8 +365,8 @@
         loadTask(current + 1);
       } else {
         // If we're on the last task and submit, check if all tasks are done
-        if (results.length === tasks.length) {
-          await submitAll();
+        if (visitedTasks.size === tasks.length) {
+          submitAll();
         } else {
           // Find first unvisited task
           for (let i = 0; i < tasks.length; i++) {
@@ -441,36 +380,16 @@
     }
 
     async function submitAll() {
-      const endTime = new Date();
-      const duration = (endTime - startTime) / 1000; // in seconds
-      
-      try {
-        const response = await fetch(WEBAPP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId: sessionId,
-            tasks: results,
-            duration: duration
-          })
-        });
-        
-        if (response.ok) {
-          document.getElementById("task-box").style.display = "none";
-          document.getElementById("done-message").style.display = "block";
-          document.getElementById("session-info").style.display = "none";
-        } else {
-          alert("Submission failed. Please try again.");
-        }
-      } catch (error) {
-        alert("Network error. Please check your connection and try again.");
-      }
+      document.getElementById("task-box").style.display = "none";
+      document.getElementById("done-message").style.display = "block";
+      await fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(results)
+      });
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-      preloadAllImages();
-    });
+    preloadAllImages();
   </script>
 </body>
 </html>
