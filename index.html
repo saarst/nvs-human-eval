@@ -48,6 +48,7 @@
     #task-counter {
       font-size: 1.2rem;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     #delta-angle {
@@ -64,6 +65,7 @@
       flex-wrap: wrap;
       gap: 30px;
       align-items: center;
+      margin: 20px 0;
     }
 
     .img-block {
@@ -81,52 +83,90 @@
     img {
       max-width: 280px;
       border-radius: 12px;
-      border: 2px solid #ccc;
+      border: 2px solid #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
-    #controls {
+    #nav-controls {
       display: flex;
       justify-content: space-between;
+      margin: 20px 0;
+      width: 100%;
+    }
+
+    #vote-controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
       margin-top: 30px;
       width: 100%;
     }
 
-    #vote-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-grow: 1;
-    }
-
-    #nav-buttons {
+    .nav-buttons {
       display: flex;
       gap: 10px;
     }
 
     button {
-      padding: 12px 20px;
+      padding: 12px 24px;
       font-size: 1rem;
       border: none;
       border-radius: 8px;
       background-color: #007bff;
       color: white;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.2s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     button:hover:not(:disabled) {
       background-color: #0056b3;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
     }
 
     button:disabled {
-      background-color: #aaa;
+      background-color: #cccccc;
       cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    #vote-controls button {
+      min-width: 140px;
+      font-weight: 500;
+    }
+
+    #nav-controls button {
+      background-color: #6c757d;
+    }
+
+    #nav-controls button:hover:not(:disabled) {
+      background-color: #5a6268;
     }
 
     #preload-status {
       margin-top: 8px;
       font-size: 0.9rem;
       color: gray;
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #e9ecef;
+      border-radius: 8px;
+      margin: 15px 0;
+      height: 8px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(to right, #007bff, #00c6ff);
+      transition: width 0.3s;
     }
   </style>
 </head>
@@ -148,6 +188,10 @@
   <div id="task-box">
     <h2 id="task-counter">Loading...</h2>
     <div id="delta-angle"></div>
+    
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
 
     <!-- Source image centered -->
     <div class="img-grid">
@@ -169,18 +213,19 @@
       </div>
     </div>
 
-    <!-- Buttons -->
-    <div id="controls">
-      <div id="nav-buttons">
-        <button onclick="navigateTask(-1)" id="prev-btn" disabled>Previous</button>
-        <button onclick="navigateTask(1)" id="next-btn" disabled>Next</button>
+    <!-- Navigation buttons -->
+    <div id="nav-controls">
+      <div class="nav-buttons">
+        <button onclick="navigateTask(-1)" id="prev-btn" disabled>← Previous</button>
+        <button onclick="navigateTask(1)" id="next-btn" disabled>Next →</button>
       </div>
-      
-      <div id="vote-buttons">
-        <button onclick="submitVote('left')">Left is better</button>
-        <button onclick="submitVote('tie')">Tie</button>
-        <button onclick="submitVote('right')">Right is better</button>
-      </div>
+    </div>
+
+    <!-- Voting buttons -->
+    <div id="vote-controls">
+      <button onclick="submitVote('left')">Left is better</button>
+      <button onclick="submitVote('tie')">Tie</button>
+      <button onclick="submitVote('right')">Right is better</button>
     </div>
   </div>
 
@@ -241,6 +286,11 @@
       loadTask(current);
     }
 
+    function updateProgress() {
+      const progress = (visitedTasks.size / tasks.length) * 100;
+      document.getElementById("progress-bar").style.width = `${progress}%`;
+    }
+
     function loadTask(index) {
       if (index < 0 || index >= tasks.length) return;
       
@@ -272,6 +322,7 @@
       
       // Mark task as visited
       visitedTasks.add(current);
+      updateProgress();
     }
 
     function navigateTask(delta) {
