@@ -1,15 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NVS Human Evaluation</title>
   <style>
-    body { font-family: sans-serif; text-align: center; margin: 20px; }
-    .img-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; }
-    img { max-width: 30%; margin: 10px; border: 1px solid #ccc; }
-    button { padding: 10px 20px; font-size: 16px; margin: 10px; }
-    #controls { margin-top: 20px; }
-    #delta-angle { margin-top: 10px; font-size: 18px; font-weight: bold; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f7f9fc;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+    }
+
+    #task-box, #done-message {
+      margin-top: 20px;
+      max-width: 900px;
+      width: 90%;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 20px 30px;
+      text-align: center;
+    }
+
+    #task-counter {
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+    }
+
+    #delta-angle {
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      justify-items: center;
+      margin-bottom: 20px;
+    }
+
+    .img-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .img-block p {
+      margin: 6px 0;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      transition: transform 0.2s ease;
+    }
+
+    img:hover {
+      transform: scale(1.02);
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      margin: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 600px) {
+      button {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -17,24 +104,23 @@
 
   <div id="task-box">
     <h2 id="task-counter">Loading...</h2>
+    <div id="delta-angle">Δ angle: ...</div>
 
-    <div id="delta-angle">Delta angle: </div>
-
-    <div class="img-row">
-      <div>
-        <p>Source image</p>
-        <img id="source-img" src="" alt="Source image">
+    <div class="img-grid">
+      <div class="img-block">
+        <p>Source</p>
+        <img id="source-img" src="" alt="Source">
       </div>
     </div>
 
-    <div class="img-row">
-      <div>
-        <p id="left-model-label">Left</p>
-        <img id="left-img" src="" alt="Left target image">
+    <div class="img-grid">
+      <div class="img-block">
+        <p id="left-model-label">Left model</p>
+        <img id="left-img" src="" alt="Left prediction">
       </div>
-      <div>
-        <p id="right-model-label">Right</p>
-        <img id="right-img" src="" alt="Right target image">
+      <div class="img-block">
+        <p id="right-model-label">Right model</p>
+        <img id="right-img" src="" alt="Right prediction">
       </div>
     </div>
 
@@ -51,8 +137,8 @@
 
   <script>
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec";
-    const RENDER_ROOT = "generatedImages"; // Folder containing renders
-    const SOURCE_ROOT = "source_images";   // Folder containing source images
+    const RENDER_ROOT = "generatedImages";
+    const SOURCE_ROOT = "source_images";
 
     let tasks = [];
     let current = 0;
@@ -82,9 +168,8 @@
       const [left, right] = t.flip ? [t.model2, t.model1] : [t.model1, t.model2];
 
       document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
-      document.getElementById("delta-angle").textContent = `Δ angle: ${delta * 22.5}°`; // each step = 360°/16
+      document.getElementById("delta-angle").textContent = `Δ angle: ${delta * 22.5}°`;
       document.getElementById("source-img").src = `${SOURCE_ROOT}/${sourceImageName}`;
-
       document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
       document.getElementById("right-img").src = `${RENDER_ROOT}/${right}/${imageName}`;
       document.getElementById("left-model-label").textContent = left;
