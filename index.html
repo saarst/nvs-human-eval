@@ -91,6 +91,18 @@
       width: 100%;
     }
 
+    #vote-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-grow: 1;
+    }
+
+    #nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
     button {
       padding: 12px 20px;
       font-size: 1rem;
@@ -157,11 +169,18 @@
       </div>
     </div>
 
-    <!-- Buttons evenly spaced -->
+    <!-- Buttons -->
     <div id="controls">
-      <button onclick="submitVote('left')">Left is better</button>
-      <button onclick="submitVote('tie')">Tie</button>
-      <button onclick="submitVote('right')">Right is better</button>
+      <div id="nav-buttons">
+        <button onclick="navigateTask(-1)" id="prev-btn" disabled>Previous</button>
+        <button onclick="navigateTask(1)" id="next-btn" disabled>Next</button>
+      </div>
+      
+      <div id="vote-buttons">
+        <button onclick="submitVote('left')">Left is better</button>
+        <button onclick="submitVote('tie')">Tie</button>
+        <button onclick="submitVote('right')">Right is better</button>
+      </div>
     </div>
   </div>
 
@@ -177,6 +196,7 @@
     let tasks = [];
     let current = 0;
     let results = [];
+    let visitedTasks = new Set();
 
     function toggleStartButton() {
       const checkbox = document.getElementById("consent-checkbox");
@@ -218,12 +238,13 @@
     async function startEvaluation() {
       document.getElementById("landing").style.display = "none";
       document.getElementById("task-box").style.display = "block";
-      loadNext();
+      loadTask(current);
     }
 
-    function loadNext() {
-      if (current >= tasks.length) return submitAll();
-
+    function loadTask(index) {
+      if (index < 0 || index >= tasks.length) return;
+      
+      current = index;
       const t = tasks[current];
       const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
       const sourceImageName = `${t.object}_${t.source_angle}.png`;
@@ -244,20 +265,64 @@
 
       t.left_model = left;
       t.right_model = right;
+      
+      // Update navigation buttons
+      document.getElementById("prev-btn").disabled = current === 0;
+      document.getElementById("next-btn").disabled = current === tasks.length - 1;
+      
+      // Mark task as visited
+      visitedTasks.add(current);
+    }
+
+    function navigateTask(delta) {
+      const newIndex = current + delta;
+      if (newIndex >= 0 && newIndex < tasks.length) {
+        loadTask(newIndex);
+      }
     }
 
     function submitVote(choice) {
       const t = tasks[current];
-      results.push({
-        object: t.object,
-        source_angle: t.source_angle,
-        target_angle: t.target_angle,
-        left_model: t.left_model,
-        right_model: t.right_model,
-        choice
-      });
-      current++;
-      loadNext();
+      
+      // Check if we already have a result for this task
+      const existingResultIndex = results.findIndex(r => 
+        r.object === t.object && 
+        r.source_angle === t.source_angle && 
+        r.target_angle === t.target_angle
+      );
+      
+      if (existingResultIndex !== -1) {
+        // Update existing result
+        results[existingResultIndex].choice = choice;
+      } else {
+        // Add new result
+        results.push({
+          object: t.object,
+          source_angle: t.source_angle,
+          target_angle: t.target_angle,
+          left_model: t.left_model,
+          right_model: t.right_model,
+          choice
+        });
+      }
+      
+      // Move to next task if this was the current task
+      if (current < tasks.length - 1) {
+        loadTask(current + 1);
+      } else {
+        // If we're on the last task and submit, check if all tasks are done
+        if (visitedTasks.size === tasks.length) {
+          submitAll();
+        } else {
+          // Find first unvisited task
+          for (let i = 0; i < tasks.length; i++) {
+            if (!visitedTasks.has(i)) {
+              loadTask(i);
+              break;
+            }
+          }
+        }
+      }
     }
 
     async function submitAll() {
