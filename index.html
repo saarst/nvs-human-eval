@@ -2,54 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NVS Human Evaluation</title>
   <style>
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f5f7fa;
       margin: 0;
       padding: 0;
-      background: #f7f9fc;
-      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
     h1 {
-      margin-top: 30px;
-      font-size: 2.5rem;
+      background: linear-gradient(to right, #007bff, #00c6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.7rem;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+
+    #landing {
+      max-width: 700px;
+      margin-top: 50px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      text-align: center;
     }
 
     #task-box, #done-message {
       margin-top: 20px;
-      max-width: 900px;
+      max-width: 1000px;
       width: 90%;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      padding: 20px 30px;
-      text-align: center;
+      padding: 25px 30px;
+      display: none;
     }
 
     #task-counter {
-      font-size: 1.25rem;
-      margin-bottom: 15px;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
     }
 
     #delta-angle {
+      font-size: 1.05rem;
       font-weight: 500;
-      font-size: 1.1rem;
-      color: #666;
-      margin-bottom: 15px;
+      color: #444;
+      margin: 10px 0 20px;
     }
 
     .img-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
       gap: 20px;
-      justify-items: center;
-      margin-bottom: 20px;
+      align-items: center;
     }
 
     .img-block {
@@ -59,68 +72,75 @@
     }
 
     .img-block p {
-      margin: 6px 0;
+      margin: 8px 0;
       font-size: 0.95rem;
       font-weight: 500;
     }
 
     img {
-      max-width: 100%;
-      border-radius: 10px;
-      border: 2px solid #ddd;
-      transition: transform 0.2s ease;
+      max-width: 280px;
+      border-radius: 12px;
+      border: 2px solid #ccc;
     }
 
-    img:hover {
-      transform: scale(1.02);
+    .arrow {
+      font-size: 2rem;
+      margin: 0 10px;
+      transform-origin: center;
+    }
+
+    #controls {
+      margin-top: 20px;
     }
 
     button {
       padding: 12px 20px;
       font-size: 1rem;
       margin: 10px;
-      background-color: #007bff;
-      color: white;
       border: none;
       border-radius: 8px;
+      background-color: #007bff;
+      color: white;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.2s;
     }
 
     button:hover {
       background-color: #0056b3;
     }
-
-    @media (max-width: 600px) {
-      button {
-        width: 100%;
-        margin-top: 10px;
-      }
-    }
   </style>
 </head>
 <body>
-  <h1>NVS Human Evaluation</h1>
+
+  <h1>🌀 NVS Human Evaluation</h1>
+
+  <div id="landing">
+    <p>Welcome! You are about to participate in a human evaluation study for novel view synthesis (NVS).</p>
+    <p>This study is part of an academic research project at the <strong>Technion – Israel Institute of Technology</strong>.</p>
+    <p>You will see a reference image (source), and two model predictions for a rotated viewpoint. Please choose the one that best matches the expected rotation.</p>
+    <button onclick="startEvaluation()">Start Evaluation</button>
+  </div>
 
   <div id="task-box">
     <h2 id="task-counter">Loading...</h2>
-    <div id="delta-angle">Δ angle: ...</div>
+    <div id="delta-angle"></div>
 
     <div class="img-grid">
       <div class="img-block">
-        <p>Source</p>
+        <p>Source Image</p>
         <img id="source-img" src="" alt="Source">
       </div>
+      <div class="arrow" id="arrow-symbol">➡️</div>
     </div>
 
     <div class="img-grid">
       <div class="img-block">
-        <p id="left-model-label">Left model</p>
-        <img id="left-img" src="" alt="Left prediction">
+        <p id="left-model-label">Left Model</p>
+        <img id="left-img" src="" alt="Left output">
       </div>
       <div class="img-block">
-        <p id="right-model-label">Right model</p>
-        <img id="right-img" src="" alt="Right prediction">
+        <p id="right-model-label">Right Model</p>
+        <img id="right-img" src="" alt="Right output">
       </div>
     </div>
 
@@ -144,6 +164,12 @@
     let current = 0;
     let results = [];
 
+    function startEvaluation() {
+      document.getElementById("landing").style.display = "none";
+      document.getElementById("task-box").style.display = "block";
+      loadTasks();
+    }
+
     async function loadTasks() {
       const res = await fetch(WEBAPP_URL);
       tasks = await res.json();
@@ -154,11 +180,18 @@
       loadNext();
     }
 
+    function getArrowSymbol(delta) {
+      const angle = delta * 22.5;
+      if (angle === 0) return "➖";
+      if (angle <= 45) return "↩️";
+      if (angle <= 135) return "⬅️";
+      if (angle <= 180) return "⬅️⤵️";
+      if (angle <= 270) return "⬇️";
+      return "➡️";
+    }
+
     function loadNext() {
-      if (current >= tasks.length) {
-        submitAll();
-        return;
-      }
+      if (current >= tasks.length) return submitAll();
 
       const t = tasks[current];
       const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
@@ -169,6 +202,8 @@
 
       document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
       document.getElementById("delta-angle").textContent = `Δ angle: ${delta * 22.5}°`;
+      document.getElementById("arrow-symbol").textContent = getArrowSymbol(delta);
+
       document.getElementById("source-img").src = `${SOURCE_ROOT}/${sourceImageName}`;
       document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
       document.getElementById("right-img").src = `${RENDER_ROOT}/${right}/${imageName}`;
@@ -187,7 +222,7 @@
         target_angle: t.target_angle,
         left_model: t.left_model,
         right_model: t.right_model,
-        choice: choice
+        choice
       });
       current++;
       loadNext();
@@ -202,8 +237,6 @@
         body: JSON.stringify(results)
       });
     }
-
-    loadTasks();
   </script>
 </body>
 </html>
