@@ -239,6 +239,7 @@
     const RENDER_ROOT = "generatedImages";
     const SOURCE_ROOT = "source_images";
 
+    let sessionId = "";
     let tasks = [];
     let current = 0;
     let results = [];
@@ -256,8 +257,9 @@
 
     async function preloadAllImages() {
       const res = await fetch(WEBAPP_URL);
-      tasks = await res.json();
-      tasks = tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
+      const data = await res.json();
+      sessionId = data.sessionId;
+      tasks = data.tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
 
       const urls = new Set();
       for (const t of tasks) {
