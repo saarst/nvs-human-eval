@@ -232,32 +232,42 @@
   <div id="done-message">
     <h2>✅ Thank you! Your responses have been submitted.</h2>
   </div>
+  <p id="submitting-status" style="display:none; text-align:center; color:gray;"></p>
+
 
   <script>
     const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec";
     const RENDER_ROOT = "generatedImages";
     const SOURCE_ROOT = "source_images";
-
+  
     let tasks = [];
     let current = 0;
     let results = [];
     let visitedTasks = new Set();
-
+    let sessionId = '';
+    let startTime = null;
+  
     function toggleStartButton() {
       const checkbox = document.getElementById("consent-checkbox");
       document.getElementById("start-btn").disabled = !checkbox.checked;
     }
-
+  
     function preloadImage(url) {
-      const img = new Image();
-      img.src = url;
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+      });
     }
-
+  
     async function preloadAllImages() {
       const res = await fetch(WEBAPP_URL);
-      tasks = await res.json();
-      tasks = tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
-
+      const data = await res.json();
+      sessionId = data.sessionId;
+      tasks = data.tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
+      startTime = new Date();
+  
       const urls = new Set();
       for (const t of tasks) {
         const src = `${SOURCE_ROOT}/${t.object}_${t.source_angle}.png`;
@@ -266,90 +276,92 @@
         urls.add(`${RENDER_ROOT}/${t.model1}/${imgName}`);
         urls.add(`${RENDER_ROOT}/${t.model2}/${imgName}`);
       }
-
+  
       let loaded = 0;
       for (const url of urls) {
-        preloadImage(url);
+        await preloadImage(url);
         loaded++;
-        if (loaded % 20 === 0) {
+        if (loaded % 20 === 0 || loaded === urls.size) {
           document.getElementById("preload-status").textContent = `📥 Preloading ${loaded}/${urls.size} images...`;
-          await new Promise(r => setTimeout(r, 10));
+          await new Promise(r => setTimeout(r, 5));
         }
       }
-
+  
       document.getElementById("preload-status").textContent = "✅ All images preloaded. Ready to start.";
+      const checkbox = document.getElementById("consent-checkbox");
+      document.getElementById("start-btn").disabled = !checkbox.checked;
+  
+      const savedResults = localStorage.getItem("nvs_results");
+      const savedIndex = localStorage.getItem("nvs_current");
+      if (savedResults && savedIndex) {
+        results = JSON.parse(savedResults);
+        current = parseInt(savedIndex);
+      }
     }
-
+  
     async function startEvaluation() {
       document.getElementById("landing").style.display = "none";
       document.getElementById("task-box").style.display = "block";
+      document.getElementById("preload-status").style.display = "none";
       loadTask(current);
     }
-
+  
     function updateProgress() {
       const progress = (visitedTasks.size / tasks.length) * 100;
       document.getElementById("progress-bar").style.width = `${progress}%`;
     }
-
+  
     function loadTask(index) {
       if (index < 0 || index >= tasks.length) return;
-      
+  
       current = index;
       const t = tasks[current];
       const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
       const sourceImageName = `${t.object}_${t.source_angle}.png`;
       const delta = (t.target_angle - t.source_angle + 16) % 16;
-      
-      // Calculate angle (0-180°)
       const rotationDegrees = Math.min(delta, 16 - delta) * 22.5;
-      
-      // Determine direction
       const isClockwise = delta <= 8;
       const direction = isClockwise ? "↻ (clockwise)" : "↺ (counter-clockwise)";
-
       const [left, right] = t.flip ? [t.model2, t.model1] : [t.model1, t.model2];
-
+  
       document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
       document.getElementById("delta-angle").textContent = `Rotation: ${rotationDegrees}° ${direction}`;
-
       document.getElementById("source-img").src = `${SOURCE_ROOT}/${sourceImageName}`;
       document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
       document.getElementById("right-img").src = `${RENDER_ROOT}/${right}/${imageName}`;
       document.getElementById("left-model-label").textContent = left;
       document.getElementById("right-model-label").textContent = right;
-
+  
       t.left_model = left;
       t.right_model = right;
-      
+  
       document.getElementById("prev-btn").disabled = current === 0;
       document.getElementById("next-btn").disabled = current === tasks.length - 1;
-      
+  
       visitedTasks.add(current);
       updateProgress();
     }
-
+  
     function navigateTask(delta) {
       const newIndex = current + delta;
       if (newIndex >= 0 && newIndex < tasks.length) {
         loadTask(newIndex);
       }
     }
-
+  
     function submitVote(choice) {
       const t = tasks[current];
-      
-      // Check if we already have a result for this task
-      const existingResultIndex = results.findIndex(r => 
-        r.object === t.object && 
-        r.source_angle === t.source_angle && 
-        r.target_angle === t.target_angle
+      const existingResultIndex = results.findIndex(r =>
+        r.object === t.object &&
+        r.source_angle === t.source_angle &&
+        r.target_angle === t.target_angle &&
+        r.left_model === t.left_model &&
+        r.right_model === t.right_model
       );
-      
+  
       if (existingResultIndex !== -1) {
-        // Update existing result
         results[existingResultIndex].choice = choice;
       } else {
-        // Add new result
         results.push({
           object: t.object,
           source_angle: t.source_angle,
@@ -359,16 +371,18 @@
           choice
         });
       }
-      
-      // Move to next task if this was the current task
+  
+      localStorage.setItem("nvs_results", JSON.stringify(results));
+      localStorage.setItem("nvs_current", current.toString());
+  
       if (current < tasks.length - 1) {
         loadTask(current + 1);
       } else {
-        // If we're on the last task and submit, check if all tasks are done
-        if (visitedTasks.size === tasks.length) {
-          submitAll();
+        if (results.length === tasks.length) {
+          if (confirm("Submit all answers now?")) {
+            submitAll();
+          }
         } else {
-          // Find first unvisited task
           for (let i = 0; i < tasks.length; i++) {
             if (!visitedTasks.has(i)) {
               loadTask(i);
@@ -378,18 +392,46 @@
         }
       }
     }
-
+  
     async function submitAll() {
+      if (results.length < tasks.length) {
+        alert("Please answer all tasks before submitting.");
+        return;
+      }
+  
+      document.querySelectorAll("button").forEach(btn => btn.disabled = true);
       document.getElementById("task-box").style.display = "none";
       document.getElementById("done-message").style.display = "block";
-      await fetch(WEBAPP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(results)
-      });
+  
+      const endTime = new Date();
+      const duration = (endTime - startTime) / 1000;
+  
+      document.body.insertAdjacentHTML("beforeend",
+        `<p id="submitting-status" style="text-align:center;color:gray;">⏳ Submitting your responses...</p>`);
+  
+      try {
+        const res = await fetch(WEBAPP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            tasks: results,
+            duration
+          })
+        });
+  
+        if (!res.ok) throw new Error("Failed to submit.");
+        document.getElementById("submitting-status").textContent = "✅ Submission complete.";
+        localStorage.removeItem("nvs_results");
+        localStorage.removeItem("nvs_current");
+      } catch (err) {
+        document.getElementById("submitting-status").textContent = "❌ Submission failed.";
+        alert("Submission failed. Please check your connection and try again.");
+      }
     }
-
+  
     preloadAllImages();
   </script>
+  
 </body>
 </html>
