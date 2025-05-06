@@ -1,0 +1,17 @@
+{
+  "object": "Deskstar_Desk_Top_Hard_Drive_1_TB",
+  "source_angle": 14,
+  "target_angle": 15,
+  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123XL/Deskstar_Desk_Top_Hard_Drive_1_TB_14_to_15.png",
+  "ckpt_path": "zero123-xl.ckpt",
+  "config": "configs/sd-objaverse-finetune-c_concat-256.yaml",
+  "_GPU_INDEX": 0,
+  "preprocess": false,
+  "scale": 3.0,
+  "n_samples": 1,
+  "ddim_steps": 50,
+  "ddim_eta": 1.0,
+  "precision": "fp32",
+  "h": 256,
+  "w": 256
+}

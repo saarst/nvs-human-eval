@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NVS Human Evaluation</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin: 20px; }
+    img { max-width: 45%; margin: 10px; border: 1px solid #ccc; }
+    button { padding: 10px 20px; font-size: 16px; margin: 10px; }
+    #controls { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>NVS Human Evaluation</h1>
+  <div id="task-box">
+    <h2 id="task-counter">Loading...</h2>
+    <div>
+      <img id="left-img" src="" alt="Left image">
+      <img id="right-img" src="" alt="Right image">
+    </div>
+    <div id="controls">
+      <button onclick="submitVote('left')">Left is better</button>
+      <button onclick="submitVote('tie')">Tie</button>
+      <button onclick="submitVote('right')">Right is better</button>
+    </div>
+  </div>
+  <div id="done-message" style="display:none">
+    <h2>✅ Thank you! Your responses have been submitted.</h2>
+  </div>
+
+  <script>
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec"; // <-- Replace this
+    const RENDER_ROOT = "generatedImages"; // Folder containing renders
+
+    let tasks = [];
+    let current = 0;
+    let results = [];
+
+    async function loadTasks() {
+      const res = await fetch(WEBAPP_URL);
+      tasks = await res.json();
+      tasks = tasks.map(task => ({
+        ...task,
+        flip: Math.random() < 0.5
+      }));
+      loadNext();
+    }
+
+    function loadNext() {
+      if (current >= tasks.length) {
+        submitAll();
+        return;
+      }
+
+      const t = tasks[current];
+      const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
+      document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
+
+      const [left, right] = t.flip ? [t.model2, t.model1] : [t.model1, t.model2];
+
+      document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
+      document.getElementById("right-img").src = `${RENDER_ROOT}/${right}/${imageName}`;
+
+      t.left_model = left;
+      t.right_model = right;
+    }
+
+    function submitVote(choice) {
+      const t = tasks[current];
+      results.push({
+        object: t.object,
+        source_angle: t.source_angle,
+        target_angle: t.target_angle,
+        left_model: t.left_model,
+        right_model: t.right_model,
+        choice: choice
+      });
+      current++;
+      loadNext();
+    }
+
+    async function submitAll() {
+      document.getElementById("task-box").style.display = "none";
+      document.getElementById("done-message").style.display = "block";
+      await fetch(WEBAPP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(results)
+      });
+    }
+
+    loadTasks();
+  </script>
+</body>
+</html>
