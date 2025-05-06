@@ -5,10 +5,119 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NVS Human Evaluation</title>
   <style>
-    /* ... all your existing styles ... */
-    #start-btn:disabled {
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      background: linear-gradient(to right, #007bff, #00c6ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.7rem;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+
+    #landing {
+      max-width: 700px;
+      margin-top: 50px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    #task-box, #done-message {
+      margin-top: 20px;
+      max-width: 1000px;
+      width: 90%;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      padding: 25px 30px;
+      display: none;
+    }
+
+    #task-counter {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    #delta-angle {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #444;
+      margin: 10px 0 20px;
+    }
+
+    .img-grid {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .img-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .img-block p {
+      margin: 8px 0;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    img {
+      max-width: 280px;
+      border-radius: 12px;
+      border: 2px solid #ccc;
+    }
+
+    .arrow {
+      font-size: 2rem;
+      margin: 0 10px;
+      transform-origin: center;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      margin: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
       background-color: #aaa;
       cursor: not-allowed;
+    }
+
+    #preload-status {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: gray;
     }
   </style>
 </head>
@@ -16,133 +125,4 @@
 
   <h1>🌀 NVS Human Evaluation</h1>
 
-  <!-- Landing Page with Consent -->
-  <div id="landing">
-    <p>Welcome! You are about to participate in a human evaluation study for novel view synthesis (NVS).</p>
-    <p>This study is part of an academic research project at the <strong>Technion – Israel Institute of Technology</strong>.</p>
-    <p>You will see a reference image (source), and two model predictions for a rotated viewpoint. Please choose the one that best matches the expected rotation.</p>
-    <label>
-      <input type="checkbox" id="consent-checkbox" onchange="toggleStartButton()"> I consent to participate in this study.
-    </label><br><br>
-    <button id="start-btn" onclick="startEvaluation()" disabled>Start Evaluation</button>
-    <p id="preload-status" style="color: gray; font-size: 0.9rem; margin-top: 10px;"></p>
-  </div>
-
-  <!-- Task interface (same as before) -->
-  <div id="task-box">...</div>
-  <div id="done-message" style="display:none">...</div>
-
-  <script>
-    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx5kBl2Nh7eBQI9KFaVQC7YBOMKyWKOdEcUARlxKyxmlorV9LVligmG-1bWt_ocwS7rDQ/exec";
-    const RENDER_ROOT = "generatedImages";
-    const SOURCE_ROOT = "source_images";
-
-    let tasks = [];
-    let current = 0;
-    let results = [];
-
-    function toggleStartButton() {
-      const checkbox = document.getElementById("consent-checkbox");
-      document.getElementById("start-btn").disabled = !checkbox.checked;
-    }
-
-    function preloadImage(url) {
-      const img = new Image();
-      img.src = url;
-    }
-
-    async function preloadAllImages() {
-      document.getElementById("preload-status").textContent = "📥 Preloading images...";
-      const res = await fetch(WEBAPP_URL);
-      tasks = await res.json();
-      tasks = tasks.map(task => ({ ...task, flip: Math.random() < 0.5 }));
-
-      const urls = new Set();
-      for (const t of tasks) {
-        const src = `${SOURCE_ROOT}/${t.object}_${t.source_angle}.png`;
-        const imgName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
-        urls.add(src);
-        urls.add(`${RENDER_ROOT}/${t.model1}/${imgName}`);
-        urls.add(`${RENDER_ROOT}/${t.model2}/${imgName}`);
-      }
-
-      let loaded = 0;
-      for (const url of urls) {
-        preloadImage(url);
-        loaded++;
-        if (loaded % 20 === 0) {
-          document.getElementById("preload-status").textContent = `📥 Preloading ${loaded}/${urls.size} images...`;
-          await new Promise(r => setTimeout(r, 10));  // slight pause to keep UI responsive
-        }
-      }
-
-      document.getElementById("preload-status").textContent = "✅ All images preloaded. Ready to start.";
-    }
-
-    async function startEvaluation() {
-      document.getElementById("landing").style.display = "none";
-      document.getElementById("task-box").style.display = "block";
-      loadNext();
-    }
-
-    function getArrowSymbol(delta) {
-      const angle = delta * 22.5;
-      if (angle === 0) return "➖";
-      if (angle <= 45) return "↩️";
-      if (angle <= 135) return "⬅️";
-      if (angle <= 180) return "⬅️⤵️";
-      if (angle <= 270) return "⬇️";
-      return "➡️";
-    }
-
-    function loadNext() {
-      if (current >= tasks.length) return submitAll();
-      const t = tasks[current];
-      const imageName = `${t.object}_${t.source_angle}_to_${t.target_angle}.png`;
-      const sourceImageName = `${t.object}_${t.source_angle}.png`;
-      const delta = (t.target_angle - t.source_angle + 16) % 16;
-      const [left, right] = t.flip ? [t.model2, t.model1] : [t.model1, t.model2];
-
-      document.getElementById("task-counter").textContent = `Task ${current + 1} of ${tasks.length}`;
-      document.getElementById("delta-angle").textContent = `Δ angle: ${delta * 22.5}°`;
-      document.getElementById("arrow-symbol").textContent = getArrowSymbol(delta);
-
-      document.getElementById("source-img").src = `${SOURCE_ROOT}/${sourceImageName}`;
-      document.getElementById("left-img").src = `${RENDER_ROOT}/${left}/${imageName}`;
-      document.getElementById("right-img").src = `${RENDER_ROOT}/${right}/${imageName}`;
-      document.getElementById("left-model-label").textContent = left;
-      document.getElementById("right-model-label").textContent = right;
-
-      t.left_model = left;
-      t.right_model = right;
-    }
-
-    function submitVote(choice) {
-      const t = tasks[current];
-      results.push({
-        object: t.object,
-        source_angle: t.source_angle,
-        target_angle: t.target_angle,
-        left_model: t.left_model,
-        right_model: t.right_model,
-        choice
-      });
-      current++;
-      loadNext();
-    }
-
-    async function submitAll() {
-      document.getElementById("task-box").style.display = "none";
-      document.getElementById("done-message").style.display = "block";
-      await fetch(WEBAPP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(results)
-      });
-    }
-
-    // Preload images as soon as page loads
-    preloadAllImages();
-  </script>
-</body>
-</html>
+  <div
