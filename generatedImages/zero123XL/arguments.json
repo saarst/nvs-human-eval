@@ -1,10 +1,4 @@
 {
-  "object": "Womens_Canvas_Bahama_in_White_UfZPHGQpvz0",
-  "source_angle": 11,
-  "target_angle": 6,
-  "output_path": "/home/saar.stern/humanEvaluation/generatedImages/zero123XL/Womens_Canvas_Bahama_in_White_UfZPHGQpvz0_11_to_6.png",
-  "ckpt_path": "zero123-xl.ckpt",
-  "config": "configs/sd-objaverse-finetune-c_concat-256.yaml",
   "_GPU_INDEX": 0,
   "preprocess": false,
   "scale": 3.0,
